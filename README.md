@@ -1,106 +1,112 @@
-# Web-Server-Hardening-Lab
-
+# Web Server Hardening Lab
 
 ## 🛡️ Overview
-This project demonstrates how to set up a simple Apache web server on **Kali Linux**, perform vulnerability scanning, and apply hardening steps to reduce risk.
+This project demonstrates how to install and configure an Apache web server on **Kali Linux**, perform vulnerability scanning, and apply hardening measures. It combines offensive security techniques for discovery with defensive actions to reduce risk.
 
-The lab emphasizes:
-- **Offensive security**: scanning the server with `nmap` and `nikto`
-- **Defensive security**: locking down Apache and improving configuration
+## Objectives
+- Install and enable a basic Apache2 web server.
+- Scan the web service using **Nmap** and **Nikto**.
+- Identify and remediate common Apache security issues.
+- Document findings before and after hardening.
 
----
+## Tools
+- **Apache2** – Web server software.
+- **Nmap** – Port and service discovery.
+- **Nikto** – Web application vulnerability scanner.
 
-## 🚀 Objectives
-- Install and configure Apache on Kali Linux
-- Scan the server using `nmap` and `nikto`
-- Identify and document security issues
-- Apply hardening steps to lower exposure
-- Verify improvements after remediation
+## Prerequisites
+- Kali Linux or Debian-based Linux environment.
+- Root or sudo privileges.
+- Internet access to install packages and updates.
 
----
+## Setup Instructions
+1. Update package sources:
+   ```bash
+   sudo apt update
+   ```
+2. Install Apache2:
+   ```bash
+   sudo apt install apache2 -y
+   ```
+3. Start and enable the Apache service:
+   ```bash
+   sudo systemctl start apache2
+   sudo systemctl enable apache2
+   ```
+4. Verify the server is running:
+   ```bash
+   sudo systemctl status apache2
+   ```
+5. Open a browser and visit:
+   ```
+   http://localhost
+   ```
 
-## 🧰 Tools Used
-- `apache2` — web server software
-- `nmap` — network and service discovery
-- `nikto` — web server vulnerability scanner
-
----
-
-## 📌 Lab Steps
-### 1. Install and start Apache
-```bash
-sudo apt update
-sudo apt install apache2 -y
-sudo systemctl enable apache2
-sudo systemctl start apache2
-```
-Result: Apache should be running at `http://localhost` or the host IP.
-
-### 2. Perform initial scans
+## Scanning and Assessment
+### Nmap Scan
+Run a service scan on the local host:
 ```bash
 sudo nmap -sV localhost
-sudo nikto -h http://localhost
 ```
 Expected findings:
-- open ports such as `80` and `22`
-- Apache service version
-- exposed web server details
-- missing security headers
-- directory listing enabled
+- Port 80 open for Apache HTTP.
+- Port 22 open for SSH (if enabled).
 
-### 3. Apply security hardening
-Common hardening actions:
-- disable directory listing
-- update Apache to the latest available version
-- add security headers
-
-Example Apache configuration change:
-```apache
-<Directory /var/www/html>
-    Options -Indexes
-</Directory>
+### Nikto Scan
+Run Nikto against the web server:
+```bash
+sudo nikto -h http://localhost
 ```
-Reload Apache:
+Common findings include:
+- Outdated Apache version information.
+- Directory listing enabled.
+- Missing security headers.
+
+## Hardening Steps
+### Disable directory listing
+Edit the Apache configuration or `.htaccess` file and add:
+```apache
+Options -Indexes
+```
+Then restart Apache:
 ```bash
 sudo systemctl restart apache2
 ```
 
-### 4. Re-scan and verify
+### Update Apache
+Upgrade the installed Apache package:
 ```bash
-sudo nmap -sV localhost
-sudo nikto -h http://localhost
+sudo apt upgrade apache2 -y
 ```
-Check that:
-- directory listing is disabled
-- Apache is updated
-- vulnerability findings are reduced
+Restart the service again after updates:
+```bash
+sudo systemctl restart apache2
+```
 
----
+### Add security headers
+Consider adding the following headers in your Apache config or virtual host:
+```apache
+Header always set X-Frame-Options "DENY"
+Header always set X-Content-Type-Options "nosniff"
+Header always set Referrer-Policy "no-referrer"
+```
 
-## 📈 Findings
-### Before fixes
-- outdated Apache version
-- directory listing enabled
-- missing security headers
+## Results
+### Before Hardening
+- Apache reported as outdated.
+- Directory listing was enabled.
+- Security headers were missing.
 
-### After fixes
-- Apache updated
-- directory listing disabled
-- security posture improved
+### After Hardening
+- Apache updated to the latest version available.
+- Directory listing disabled.
+- Web server security posture improved.
 
----
+## Suggested Improvements
+- Configure HTTPS with SSL/TLS certificates.
+- Enable HTTP Strict Transport Security (HSTS).
+- Regularly install security updates.
+- Add a web application firewall (WAF) for additional protection.
 
-## 💡 Suggested Improvements
-- Enable HTTPS with SSL/TLS certificates
-- Add security headers such as:
-  - `X-Frame-Options`
-  - `X-Content-Type-Options`
-  - `Referrer-Policy`
-  - `Content-Security-Policy`
-- Regularly patch and monitor the server
-- Restrict access to management interfaces
-
----
-
-## 📝 Summary
-This lab shows how to build a basic Kali Linux web server hardening workflow: install Apache, identify weaknesses with scanning tools, apply configuration fixes, and confirm the server is more secure.
+## Notes
+This repository is intended as a lab exercise for learning web server hardening techniques on Kali Linux. Use it as a foundation for further security testing and configuration.
