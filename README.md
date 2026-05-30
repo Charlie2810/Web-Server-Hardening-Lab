@@ -1,5 +1,5 @@
 # Web-Server-Hardening-Lab
- # Web Server Hardening Lab
+
 
 ## 🛡️ Overview
 This project demonstrates how to set up a simple Apache web server on **Kali Linux**, perform vulnerability scanning, and apply hardening steps to reduce risk.
